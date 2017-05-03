@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "moduleResolution": "node",
+        "sourceMap": false,
+        // types option has been previously configured
+         "types": [
+            // add node as an option
+            "node"
+         ],
+         // typeRoots option has been previously configured
+         "typeRoots": [
+            // add path to @types
+            "node_modules/@types"
+         ]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
