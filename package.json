@@ -17,6 +17,7 @@
     "gulp-clean": "^0.3.2",
     "gulp-shell": "^0.6.3",
     "gulp-typescript": "^3.1.6",
+    "merge2": "^1.0.3",
     "requirejs": "^2.3.3",
     "run-sequence": "^1.2.2",
     "tfx-cli": "^0.3.13",

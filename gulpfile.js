@@ -4,10 +4,7 @@ var runSequence = require('run-sequence');
 var del = require('del');
 var shell = require('gulp-shell');
 var clean = require('gulp-clean');
-
-var tsProject = ts.createProject({
-    declaration: true
-});
+var merge = require('merge2');
 
 gulp.task('build', function() {
     runSequence(
@@ -20,26 +17,32 @@ gulp.task('build', function() {
 });
 
 gulp.task('clean-dist', function() {
-    gulp.src(['dist/**', '!dist'])
+   gulp.src(['dist/**', '!dist'])
         .pipe(clean({force: true}));
 });
-
-gulp.task('transpile-ts', function() {
-    gulp.src('scripts/*.ts')
-        .pipe(tsProject());
-});
-
-gulp.task('build-vsix', shell.task([
-    'tfx extension create --manifest-globs vss-extension.json --rev-version'
-]));
 
 gulp.task('copy-vss-sdk', function () {
     gulp.src('node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js')
         .pipe(gulp.dest('sdk/scripts/'));
 });
 
+gulp.task('transpile-ts', function() {
+    var tsResult = gulp.src('scripts/*.ts')
+        .pipe((ts.createProject('tsconfig.json'))());
+
+    return merge([
+        // Merge the two output streams, so this task is finished when the IO of both operations is done. 
+        tsResult.dts.pipe(gulp.dest('scripts')),
+        tsResult.js.pipe(gulp.dest('scripts'))
+    ]);
+});
+
+gulp.task('build-vsix', shell.task([
+    'tfx extension create --manifest-globs vss-extension.json --rev-version'
+]));
+
 gulp.task('copy-vsix', function() {
-    gulp.src('*.vsix')
+    gulp.src('*.vsix', {base: "./"})
         .pipe(gulp.dest('./dist'));
 });
 
@@ -48,8 +51,8 @@ gulp.task('clean-vsix', function() {
         .pipe(clean({force: true}));
 });
 
-gulp.task('watch', function () {
-    gulp.watch(['*.html', 'vss-extension.json', 'scripts/*.js', 'images/**'], ['build']);
+gulp.task('watch', ['build'], function () {
+    gulp.watch(['*.html', "scripts/**/*.ts", 'images/**'], ['build']);
 });
 
 gulp.task('default', ['build']);

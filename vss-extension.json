@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "color-form-control",
-    "version": "0.0.0",
+    "version": "0.1.0",
     "name": "Color picklist control",
     "description": "Add custom colors and labels for picklist fields.",
     "publisher": "ms-devlabs",
@@ -45,10 +45,6 @@
     "files": [
         {
             "path": "img",
-            "addressable": true
-        },
-        {
-            "path": "dist",
             "addressable": true
         },
         {

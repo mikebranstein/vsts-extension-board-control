@@ -12,7 +12,6 @@ $(window).bind("keydown", function (event: JQueryEventObject) {
         }
     }
 });
-
 var control: Controller;
 
 var provider = () => {
