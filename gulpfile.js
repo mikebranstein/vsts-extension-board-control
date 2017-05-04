@@ -27,7 +27,7 @@ gulp.task('copy-vss-sdk', function () {
 });
 
 gulp.task('transpile-ts', function() {
-    var tsResult = gulp.src('scripts/*.ts')
+    var tsResult = gulp.src('scripts/**/*.ts')
         .pipe((ts.createProject('tsconfig.json'))());
 
     return merge([

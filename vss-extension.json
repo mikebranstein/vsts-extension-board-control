@@ -1,10 +1,10 @@
 {
     "manifestVersion": 1,
-    "id": "color-form-control",
-    "version": "0.1.40",
+    "id": "board-form-control",
+    "version": "0.1.91",
     "name": "Color picklist control",
     "description": "Add custom colors and labels for picklist fields.",
-    "publisher": "ms-devlabs",
+    "publisher": "mike-branstein",
     "icons": {
         "default": "img/logo.png"
     },
@@ -16,8 +16,8 @@
     "tags": [
         "Work Item",
         "Work Item control",
-        "Pick list",
-        "Color coded"
+        "Board",
+        "Lane"
     ],
     "content": {
         "details": {
@@ -26,20 +26,20 @@
     },
     "repository": {
         "type": "git",
-        "uri": "https://github.com/Microsoft/vsts-extension-color-control"
+        "uri": "https://github.com/mikebranstein/vsts-extension-board-control"
     },
     "links": {
         "learn": {
-            "uri": "https://github.com/Microsoft/vsts-extension-color-control/blob/master/README.md"
+            "uri": "https://github.com/mikebranstein/vsts-extension-board-control/blob/master/README.md"
         },
         "support": {
-            "uri": "https://github.com/Microsoft/vsts-extension-color-control"
+            "uri": "https://github.com/mikebranstein/vsts-extension-board-control"
         },
         "repository": {
-            "uri": "https://github.com/Microsoft/vsts-extension-color-control"
+            "uri": "https://github.com/mikebranstein/vsts-extension-board-control"
         },
         "issues": {
-            "uri": "https://github.com/Microsoft/vsts-extension-color-control/issues"
+            "uri": "https://github.com/mikebranstein/vsts-extension-board-control/issues"
         }
     },
     "files": [
@@ -56,7 +56,11 @@
             "addressable": true
         },
         {
-            "path": "index.html",
+            "path": "color-index.html",
+            "addressable": true
+        },
+        {
+            "path": "board-column-index.html",
             "addressable": true
         },
         {
@@ -77,7 +81,7 @@
             ],
             "properties": {
                 "name": "Color picklist control",
-                "uri": "index.html",
+                "uri": "color-index.html",
                 "height": 90,
                 "inputs": [
                     {
@@ -110,6 +114,19 @@
                         }
                     }
                 ]
+            }
+        },
+        {
+            "id": "board-column-control-contribution",
+            "type": "ms.vss-work-web.work-item-form-control",
+            "description": "Add board column visualization.",
+            "targets": [
+                "ms.vss-work-web.work-item-form"
+            ],
+            "properties": {
+                "name": "Board column combobox control",
+                "uri": "board-column-index.html",
+                "height": 90
             }
         }
     ]

@@ -5,23 +5,21 @@
     <meta charset="utf-8" />
     <!-- VSS Framework --> 
     <script src="sdk/scripts/VSS.SDK.min.js"></script> 
-
-    <title>Color Control</title>
-    <link rel="stylesheet" href="styles/style.css" type="text/css"/>
 </head>
 
 <body>
     <script>
         VSS.init({
             explicitNotifyLoaded: true,
-            usePlatformScripts: true
+            usePlatformScripts: true,
+            usePlatformStyles: true
         });
 
         // Load main entry point for extension 
-        VSS.require(["scripts/app"], function () {
+        VSS.require(["scripts/board-column/app"], function () {
             // loading succeeded
             VSS.notifyLoadSucceeded();
         });
-    </script>
+    </script> 
 </body>
 </html>
