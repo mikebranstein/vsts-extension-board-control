@@ -2,6 +2,7 @@
     "compilerOptions": {
         "module": "amd",
         "sourceMap": false,
+        "target": "es6",
         "moduleResolution": "node",
         "types": [
             "vss-web-extension-sdk",

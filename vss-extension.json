@@ -1,9 +1,9 @@
 {
     "manifestVersion": 1,
     "id": "board-form-control",
-    "version": "0.1.92",
-    "name": "Color picklist control",
-    "description": "Add custom colors and labels for picklist fields.",
+    "version": "0.1.296",
+    "name": "Board Work Item Form Control",
+    "description": "Add combobox form controls for the board column and swimlane to the work item form.",
     "publisher": "mike-branstein",
     "icons": {
         "default": "img/logo.png"
@@ -42,6 +42,9 @@
             "uri": "https://github.com/mikebranstein/vsts-extension-board-control/issues"
         }
     },
+    "scopes": [
+        "vso.work_write"
+    ],
     "files": [
         {
             "path": "img",
@@ -61,6 +64,10 @@
         },
         {
             "path": "board-column-index.html",
+            "addressable": true
+        },
+        {
+            "path": "board-form.html",
             "addressable": true
         },
         {
@@ -127,6 +134,15 @@
                 "name": "Board column combobox control",
                 "uri": "board-column-index.html",
                 "height": 90
+            }
+        },
+        {
+            "id": "board-form",
+            "type": "ms.vss-web.control",
+            "description": "The content to be displayed in the dialog",
+            "targets": [],
+            "properties": {
+                "uri": "board-form.html"
             }
         }
     ]

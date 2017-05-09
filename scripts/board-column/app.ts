@@ -18,13 +18,7 @@ var provider = () => {
     return {
         onLoaded: (workItemLoadedArgs: ExtensionContracts.IWorkItemLoadedArgs) => {
             control = new Controller();
-        }//,
-        // onFieldChanged: (fieldChangedArgs: ExtensionContracts.IWorkItemFieldChangedArgs) => {
-        //     var changedValue = fieldChangedArgs.changedFields[control.getFieldName()];
-        //     if (changedValue !== undefined) {
-        //         control.updateExternal(changedValue);
-        //     }
-        // }
+        }
     }
 };
 

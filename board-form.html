@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <!-- VSS Framework --> 
+    <script src="sdk/scripts/VSS.SDK.min.js"></script> 
+</head>
+
+<body>
+    <script>
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformScripts: true,
+            usePlatformStyles: true
+        });
+
+        // Load main entry point for extension 
+        VSS.require(["scripts/board-form/app","TFS/Dashboards/WidgetHelpers"], function (app, WidgetHelpers) {
+            // loading succeeded
+            WidgetHelpers.IncludeWidgetStyles();
+            VSS.notifyLoadSucceeded();
+        });
+    </script> 
+
+    <div class="widget-configuration">
+        <div class="description">Select a board column and swimlane to move your work item.</p>
+        <div class="content">
+            <div class="dropdown">
+                <label>Board column</label>
+                <div class="wrapper">
+                    <select class="board-column-select">
+                    </select>
+                </div>
+            </div>
+            <div class="dropdown">
+                <label>Swimlane</label>
+                <div class="wrapper">
+                    <select class="swimlane-select">
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

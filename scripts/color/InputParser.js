@@ -1,9 +1,7 @@
 define(["require", "exports", "./colors"], function (require, exports, colors_1) {
     "use strict";
-    exports.__esModule = true;
-    var InputParser = (function () {
-        function InputParser() {
-        }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class InputParser {
         /**
          * Parses and gets a FieldName from a dictionary.
          * @param {IDictionaryStringTo<string>} inputs - The dictionary has the structure:
@@ -16,12 +14,12 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
          * @return {string} The FieldName
          * @throws Will throw an {string} error if a FieldName is not specified in the dictionary.
          */
-        InputParser.getFieldName = function (inputs) {
+        static getFieldName(inputs) {
             if (inputs["FieldName"]) {
                 return inputs["FieldName"];
             }
             throw ("FieldName not specified.");
-        };
+        }
         /**
          * Parses the inputs from a {IDictionaryStringTo<string>} dictionary.
          * @return an array of Interfaces of the structure: {
@@ -31,12 +29,12 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
          *       }
          * @throws Will throw an {string} error if allowedValues are not specified.
          */
-        InputParser.getOptions = function (inputs, allowedValues) {
+        static getOptions(inputs, allowedValues) {
             if (allowedValues && allowedValues.length) {
-                var colors = [];
-                var inputColors = [];
-                var labels = [];
-                var inputLabels = [];
+                let colors = [];
+                let inputColors = [];
+                let labels = [];
+                let inputLabels = [];
                 inputColors = InputParser._extractInputs(inputs["Colors"]);
                 inputLabels = InputParser._extractInputs(inputs["Labels"]);
                 colors = InputParser._getColors(inputColors, allowedValues);
@@ -46,7 +44,7 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
             else {
                 throw ("The backing field does not have allowed values.");
             }
-        };
+        }
         /**
          * Parses {string} rawInput, converting the input to an array of values.
          * @param {string} rawInput - The string consists of colors or labels
@@ -55,12 +53,12 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
          * @static
          * @private
          */
-        InputParser._extractInputs = function (rawInput) {
+        static _extractInputs(rawInput) {
             if (rawInput) {
                 return rawInput.split(";");
             }
             return [];
-        };
+        }
         /**
          * Takes {string[]} inputColors and string{[]} values, and maps {string} colors
          * to every value. Also, it checks if the colors were correctly inputed.
@@ -69,7 +67,7 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
          * @static
          * @private
          */
-        InputParser._getColors = function (inputColors, values) {
+        static _getColors(inputColors, values) {
             if (inputColors.length < values.length) {
                 //append default colors if we are given less colors than values
                 return inputColors.concat(colors_1.Colors.getColors(values.length).slice(inputColors.length));
@@ -77,7 +75,7 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
             else {
                 return inputColors.slice(0, values.length);
             }
-        };
+        }
         /**
          * Takes {string[]} inputLabels and string{[]} values, and maps {string} labels
          * to every value. If more values were provided, it ignores them. If less labels
@@ -87,11 +85,11 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
          * @static
          * @private
          */
-        InputParser._getLabels = function (inputLabels, values) {
+        static _getLabels(inputLabels, values) {
             // Values length can never be 0, labels length can be 0 or more 
             // Defaults to empty string if less labels than values are provided
-            return values.map(function (v, idx) { return inputLabels[idx] || ""; });
-        };
+            return values.map((v, idx) => inputLabels[idx] || "");
+        }
         /**
          * Takes {string[]} values, colors and labels; and populates an array of interfaces of the
          * form {value: "string", color: "string", label: "string"}
@@ -99,10 +97,10 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
          * @static
          * @private
          */
-        InputParser._buildOptions = function (values, colors, labels) {
-            var options = [];
-            var valuesLength = values.length;
-            for (var i = 0; i < valuesLength; i++) {
+        static _buildOptions(values, colors, labels) {
+            let options = [];
+            let valuesLength = values.length;
+            for (let i = 0; i < valuesLength; i++) {
                 options.push({
                     value: values[i],
                     color: colors[i],
@@ -110,8 +108,7 @@ define(["require", "exports", "./colors"], function (require, exports, colors_1)
                 });
             }
             return options;
-        };
-        return InputParser;
-    }());
+        }
+    }
     exports.InputParser = InputParser;
 });

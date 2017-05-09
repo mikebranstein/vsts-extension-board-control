@@ -1,166 +1,137 @@
-// import { IOption } from "./IOption";
-// import { Model } from "./model";
-
 import Controls = require("VSS/Controls");
 import Combos = require("VSS/Controls/Combos");
-
-// export class columnOption {
-//     private _columnOption: JQuery;
-
-//     constructor(public allowedValue: string) {
-
-//     }
-
-//     public create(): JQuery {
-//         this._columnOption = $("<li> </li>").attr("role", "option");
-//         this._columnOption.text(this.allowedValue);
-
-//         return this._columnOption;
-//     }
-
-// //     public select(focus: boolean): void {
-// //         this._row.addClass("selected");
-// //         this._row.attr("aria-checked", "true");
-// //         this._row.attr("tabindex", 0);
-// //         if (focus) {
-// //             this._row.focus();
-// //         }
-// //     }
-
-// //     public unselect(): void {
-// //         this._row.removeClass("selected");
-// //         this._row.attr("aria-checked", "false");
-// //         this._row.attr("tabindex", -1);
-// //     }
-
-// }
-
-
+import WitService = require("TFS/WorkItemTracking/Services");
+import WitClient = require("TFS/WorkItemTracking/RestClient");
+import WitContracts = require("TFS/WorkItemTracking/Contracts");
+import CoreContracts = require("TFS/Core/Contracts");
+import CoreClient = require("TFS/Core/RestClient");
+import WorkClient = require("TFS/Work/RestClient");
+import VSS_WebApi = require("VSS/WebApi/RestClient");
+import Dialogs = require("VSS/Controls/Dialogs");
 
 /**
  * Class colorControl returns a container that renders each row, the selected value,
  * and a function that allows the user to change the selected value.
  */
-export class boardColumnControl {
+export class BoardColumnControl {
 
-    // public columns: columnOption[] = [];
+    selectedColumn:string;
+    private boardColumns:Array<string>;
+    private wifService:WitService.IWorkItemFormService;
+    private witClient:WitClient.WorkItemTrackingHttpClient3_2;
+    private coreClient:CoreClient.CoreHttpClient3;
+    private workClient:WorkClient.WorkHttpClient3_2;
+    private workItemId:number;
+    private workItem:WitContracts.WorkItem;
+    private projectId:string;
+    private teamId:string;
+    private boardColumnReferenceName:string;
 
-    constructor(private onItemClicked: Function, private onNextItem: Function, private onPreviousItem: Function) {
-        this.init();
+    constructor() {
+        WitService.WorkItemFormService.getService()
+            .then((wifService) => { 
+                this.wifService = wifService;
+                this.witClient = WitClient.getClient();
+                this.coreClient = CoreClient.getClient();
+                this.workClient = WorkClient.getClient();
+
+                this.init();
+            });
     }
 
     // creates the container
     public init(): void {
 
-        // <div aria-label="Tag" role="combobox" aria-expanded="true" aria-owns="owned_listbox" aria-haspopup="listbox">
-        //     <input type="text" aria-autocomplete="list" aria-controls="owned_listbox" aria-activedescendant="selected_option">
-        // </div>
-        // <ul role="listbox" id="owned_listbox">
-        //     <li role="option">Zebra</li>
-        //     <li role="option" id="selected_option">Zoom</li>
-        // </ul>
+        this.getBoardColumnsAsync()
+            .then((boardColumns) => {
+                this.boardColumns = boardColumns;
 
-        // control container
-        var container = $("<div> </div>");
+                // control container
+                let container = $(".container");
 
-        // Create the combo in a container element
-        var options = <Combos.IComboOptions>{
-            source: ["New","Deferred","Approved"],
-            change: function() {
-                console.log("changed");
-            },
-            indexChanged: function(index: number) {
-                console.log("indexchanged: " + index);
-            }
-        };
-        Controls.create<Combos.Combo, Combos.IComboOptions>(Combos.Combo, container, options);
+                // Create the combo in a container element
+                let options = <Combos.IComboOptions>{
+                    source: this.boardColumns,
+                    change: () =>  {
+                        console.log("changed");
+                    },
+                    indexChanged: (index: number) => {
+                        this.selectedColumn = this.boardColumns[index];
 
+                        
 
-        // container.addClass("combo input-text-box list drop");
+                        // this.witClient.updateWorkItem(
+                        //     [{"op":"add","path":"/fields/" + this.boardColumnReferenceName,"value":this.selectedColumn}],
+                        //     this.workItemId,
+                        //     false,
+                        //     false);
 
-        // // wrap for combo
-        // var wrap = $("<div> </div>");
-        // wrap.addClass("wrap");
+                        // also need to 
+                        console.log(this.selectedColumn);
+                    }
+                };
+                Controls.create<Combos.Combo, Combos.IComboOptions>(Combos.Combo, container, options);
 
-        // // text to hold combobox selected value
-        // var text = $("<input />").attr("type", "text");
-        // text.attr("autocomplete", "off");
-        // text.attr("role", "combobox");
-        // wrap.append(text);
-        // container.append(wrap);
+                let wid = this.workItemId;
+                VSS.getService(VSS.ServiceIds.Dialog).then((dialogService:IHostDialogService) => {
+                    let formInstance;
+                    var extensionCtx = VSS.getExtensionContext();
+                    // Build absolute contribution ID for dialogContent
+                    let contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".board-form";
 
-        // // button
-        // var button = $("<div> </div>").attr("role", "button");
-        // button.addClass("drop bowtie-chevron-don-light bowtie-icon");
-        // container.append(button);
+                    // Show dialog
+                    var dialogOptions = {
+                        title: "Move Work Item",
+                        width: 400,
+                        height: 400
+                    };
 
-        // // ul for the combobox contents
-        // var ul = $("<ul> </ul>").attr("role", "listbox");
-        // ul.attr("id", "owned_listbox");
+                    dialogService.openDialog(contributionId, dialogOptions)
+                        .then((dialog) => {
+                            dialog.getContributionInstance(contributionId).then((instance:any) => {
+                                formInstance = instance;
 
-        // var options: string[] = ["New","Deferred","Approved"];
-        // for (let option of options) {
-        //     var column = new columnOption(option);
-        //     this.columns.push(column);
-        //     ul.append(column.create());
-        // }
-        // container.append(ul);
+                                console.log(this.workItemId);
 
-        // // allows user to click, keyup, or keydown to change the selected value.
-        // $(document).click((evt: JQueryMouseEventObject) => {
-        //     this._click(evt);
-        // }).bind('keydown', (evt: JQueryKeyEventObject) => {
-        //     if (evt.keyCode == 40 || evt.keyCode == 39) {
-        //         // According to ARIA accessibility guide, both down and right arrows should be used.
-        //         if (this.onNextItem) {
-        //             this.onNextItem();
-        //             evt.preventDefault();
-        //         }
-        //     }
-        //     else if (evt.keyCode == 38 || evt.keyCode == 37) {
-        //         // According to ARIA accessibility guide, both up and left arrows should be used.
-        //         if (this.onPreviousItem) {
-        //             this.onPreviousItem();
-        //             evt.preventDefault();
-        //         }
-        //     }
-        // });
+                                // initialization code goes here
+                                formInstance.initialize(wid);
+                            })
+                        })
+                });
+            });
 
-        $('body').empty().append(container);
-
-        $(document).ready(() => {
-            this._scroll();
-        });
     }
 
-    public update(value: string, focus: boolean): void {
-        // for (let row of this.rows) {
-        //     if (row.allowedValue == value) {
-        //         row.select(focus);
-        //     }
-        //     else {
-        //         row.unselect();
-        //     }
-        // }
-        // this._scroll();
-    }
+    private getBoardColumnsAsync(): IPromise<Array<string>> {
+        let boardColumns: Array<string> = new Array<string>();
 
-    private _scroll(): void {
-        // let scrollTo = $("div.row.selected");
+        return this.wifService.hasActiveWorkItem()
+            .then((hasActiveWorkItem) => {
+                if (hasActiveWorkItem) return this.wifService.getId();
+            }).then((workItemId) => {
+                this.workItemId = workItemId;
+                return this.witClient.getWorkItem(this.workItemId, null, null, WitContracts.WorkItemExpand.All);
+            }).then((workItem) => {
+                this.workItem = workItem;
+                return this.coreClient.getProjects();
+            }).then((projects) => {
+                var project = <CoreContracts.TeamProjectReference>
+                    projects.filter((project) => { 
+                        return project.name === this.workItem.fields["System.TeamProject"]; 
+                    })[0];
+                this.projectId = project.id;
+                return this.coreClient.getTeams(this.projectId, 1, 0);
+            }).then((teams) => {
+                this.teamId = teams[0].id;
+                return this.workClient.getBoard(<CoreContracts.TeamContext>{ projectId: this.projectId, teamId: this.teamId }, "Stories");
+            }).then((board) => {
+                this.boardColumnReferenceName = board.fields.columnField.referenceName;
+                board.columns.forEach((column) => {
+                    boardColumns.push(column.name);
+                    console.log(column.name);
+                }, this);
 
-        // if (scrollTo.length) {
-        //     if (scrollTo.offset().top > $(".container").height()) {
-        //         $(".container").scrollTop(
-        //             scrollTo.offset().top - $(".container").offset().top + $(".container").scrollTop()
-        //         );
-        //     }
-        // }
-    }
-
-    private _click(evt: JQueryMouseEventObject): void {
-        // let itemClicked = $(evt.target).closest(".row").data("value");
-        // if (itemClicked != null && $.isFunction(this.onItemClicked)) {
-        //     this.onItemClicked(itemClicked);
-        // }
+                return boardColumns;
+            });
     }
 }

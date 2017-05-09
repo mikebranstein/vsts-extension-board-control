@@ -5,13 +5,12 @@ Purpose: This class is being used to get errors from an input parser and
 ***************************************************************************/
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    exports.__esModule = true;
+    Object.defineProperty(exports, "__esModule", { value: true });
     // shows the errors in the control container rather than the control.
-    var ErrorView = (function () {
-        function ErrorView(error) {
+    class ErrorView {
+        constructor(error) {
             // container div
-            var errorContainer = $("<div />");
-            errorContainer.addClass("errorContainer");
+            var errorContainer = $(".errorContainer");
             var rdiv = $("<div/>").addClass("rightDiv");
             var ldiv = $("<div/>");
             var icon = $("<span class='bowtie-icon bowtie-status-error'></span>");
@@ -28,9 +27,7 @@ define(["require", "exports"], function (require, exports) {
             ldiv.append(help);
             errorContainer.append(rdiv);
             errorContainer.append(ldiv);
-            $('body').empty().append(errorContainer);
         }
-        return ErrorView;
-    }());
+    }
     exports.ErrorView = ErrorView;
 });

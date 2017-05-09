@@ -1,13 +1,11 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    exports.__esModule = true;
-    var Colors = (function () {
-        function Colors() {
-        }
+    Object.defineProperty(exports, "__esModule", { value: true });
+    class Colors {
         /** Colors holds a static method called getColors. This method allows InputParser to
          * retrieve default colors when the user inputs no colors, but has at least 1 value.
          */
-        Colors.getColors = function (numberOfValues) {
+        static getColors(numberOfValues) {
             /** Takes in the number of values available in the control and returns an array of
             * default colors equal to the number of values.
             */
@@ -15,7 +13,7 @@ define(["require", "exports"], function (require, exports) {
             var newColors = [];
             // defaultColors is an array of default color arrays, allows retrieval of array by index
             // Note: Colors need to be changed to official colors, these are just test colors. 
-            var defaultColors = [
+            const defaultColors = [
                 ["red"],
                 ["red", "blue"],
                 ["red", "yellow", "blue"],
@@ -42,8 +40,7 @@ define(["require", "exports"], function (require, exports) {
                 // Covers null, negative and undefined numberOfValues 
                 throw "Incorrect input and no default colors can be provided";
             }
-        };
-        return Colors;
-    }());
+        }
+    }
     exports.Colors = Colors;
 });
