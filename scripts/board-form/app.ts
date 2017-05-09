@@ -1,4 +1,5 @@
 import { BoardService } from "./board-service";
+import { BoardModel } from "./boardModel";
 
 var provider = () => {
     
@@ -26,7 +27,7 @@ var provider = () => {
                     .then((swimlanes) => {
 
                         // populate the drop down
-                        let select = $(".swimlane-select");
+                        let select = $(".board-row-select");
 
                         swimlanes.forEach((swimlane) => {
                             let option = $("<option></option>");
@@ -37,9 +38,29 @@ var provider = () => {
                     });
             });
     }
+
+    function getFormData(workItemId):BoardModel { 
+        // is called when the dialog Ok button is clicked. should return the data
+        var boardModel = new BoardModel();
+        boardModel.boardColumn = $(".board-column-select").val();
+        boardModel.boardRow = $(".board-row-select").val();
+
+        var boardService = new BoardService(workItemId);
+        boardService.updateBoardColumnAsync(boardModel.boardColumn)
+            .then(() => {
+                console.log("here");
+            return boardModel;
+
+            });
+        //var rowPromise = boardService.updateBoardRowAsync(boardModel.boardRow);
+    }
+
     return {
         initialize: (workItemId:number) => {
             return init(workItemId);
+        },
+        getFormData: (workItemId:number) => {
+            return getFormData(workItemId);
         }
     }
 };

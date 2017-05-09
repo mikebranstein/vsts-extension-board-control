@@ -1,4 +1,4 @@
-define(["require", "exports", "./board-service"], function (require, exports, board_service_1) {
+define(["require", "exports", "./board-service", "./boardModel"], function (require, exports, board_service_1, boardModel_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var provider = () => {
@@ -22,7 +22,7 @@ define(["require", "exports", "./board-service"], function (require, exports, bo
                     .getSwimlanesAsync()
                     .then((swimlanes) => {
                     // populate the drop down
-                    let select = $(".swimlane-select");
+                    let select = $(".board-row-select");
                     swimlanes.forEach((swimlane) => {
                         let option = $("<option></option>");
                         option.attr("value", swimlane);
@@ -32,9 +32,25 @@ define(["require", "exports", "./board-service"], function (require, exports, bo
                 });
             });
         }
+        function getFormData(workItemId) {
+            // is called when the dialog Ok button is clicked. should return the data
+            var boardModel = new boardModel_1.BoardModel();
+            boardModel.boardColumn = $(".board-column-select").val();
+            boardModel.boardRow = $(".board-row-select").val();
+            var boardService = new board_service_1.BoardService(workItemId);
+            boardService.updateBoardColumnAsync(boardModel.boardColumn)
+                .then(() => {
+                console.log("here");
+                return boardModel;
+            });
+            //var rowPromise = boardService.updateBoardRowAsync(boardModel.boardRow);
+        }
         return {
             initialize: (workItemId) => {
                 return init(workItemId);
+            },
+            getFormData: (workItemId) => {
+                return getFormData(workItemId);
             }
         };
     };

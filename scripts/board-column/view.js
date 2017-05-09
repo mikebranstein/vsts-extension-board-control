@@ -44,6 +44,7 @@ define(["require", "exports", "VSS/Controls", "VSS/Controls/Combos", "TFS/WorkIt
                 let wid = this.workItemId;
                 VSS.getService(VSS.ServiceIds.Dialog).then((dialogService) => {
                     let formInstance;
+                    let dialogInstance;
                     var extensionCtx = VSS.getExtensionContext();
                     // Build absolute contribution ID for dialogContent
                     let contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".board-form";
@@ -51,10 +52,21 @@ define(["require", "exports", "VSS/Controls", "VSS/Controls/Combos", "TFS/WorkIt
                     var dialogOptions = {
                         title: "Move Work Item",
                         width: 400,
-                        height: 400
+                        height: 275,
+                        getDialogResult: () => {
+                            // this happens when the Ok button is clicked
+                            return formInstance ? formInstance.getFormData(wid) : null;
+                        },
+                        okCallback: (result) => {
+                            // If a call to getDialogResult returns a non-null value, this value is then
+                            // passed to the function specified by okCallback (also in the options) and the dialog is closed.
+                            console.log("called");
+                            dialogInstance.close();
+                        }
                     };
                     dialogService.openDialog(contributionId, dialogOptions)
                         .then((dialog) => {
+                        dialogInstance = dialog;
                         dialog
                             .getContributionInstance(contributionId)
                             .then((instance) => {

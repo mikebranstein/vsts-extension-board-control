@@ -30,8 +30,8 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
                         this.teamId = teams[0].id;
                         return this.workClient.getBoard({ projectId: this.projectId, teamId: this.teamId }, "Stories");
                     }).then((board) => {
-                        console.log("here");
                         this.boardColumnReferenceName = board.fields.columnField.referenceName;
+                        this.boardLaneReferenceName = board.fields.rowField.referenceName;
                         board.columns.forEach((column) => {
                             this.boardColumns.push(column.name);
                         });
@@ -56,6 +56,29 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
                 this.loadBoardDataAsync()
                     .then(() => {
                     resolve(this.boardRows);
+                });
+            });
+        }
+        updateBoardColumnAsync(boardColumn) {
+            return new Promise((resolve, reject) => {
+                this.loadBoardDataAsync()
+                    .then(() => {
+                    this.witClient.updateWorkItem([{ "op": "add", "path": "/fields/" + this.boardColumnReferenceName, "value": boardColumn }], this.workItemId, false, false)
+                        .then((workItem) => {
+                        console.log("wrote column");
+                        resolve();
+                    });
+                });
+            });
+        }
+        updateBoardRowAsync(boardRow) {
+            return new Promise((resolve, reject) => {
+                this.loadBoardDataAsync()
+                    .then(() => {
+                    this.witClient.updateWorkItem([{ "op": "add", "path": "/fields/" + this.boardLaneReferenceName, "value": boardRow }], this.workItemId, false, false)
+                        .then((workItem) => {
+                        resolve();
+                    });
                 });
             });
         }

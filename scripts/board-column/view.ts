@@ -8,6 +8,7 @@ import CoreClient = require("TFS/Core/RestClient");
 import WorkClient = require("TFS/Work/RestClient");
 import VSS_WebApi = require("VSS/WebApi/RestClient");
 import Dialogs = require("VSS/Controls/Dialogs");
+import { BoardModel } from "../board-form/boardModel";
 
 /**
  * Class colorControl returns a container that renders each row, the selected value,
@@ -75,6 +76,7 @@ export class BoardColumnControl {
                 let wid = this.workItemId;
                 VSS.getService(VSS.ServiceIds.Dialog).then((dialogService:IHostDialogService) => {
                     let formInstance;
+                    let dialogInstance:IExternalDialog;
                     var extensionCtx = VSS.getExtensionContext();
                     // Build absolute contribution ID for dialogContent
                     let contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".board-form";
@@ -83,11 +85,22 @@ export class BoardColumnControl {
                     var dialogOptions = {
                         title: "Move Work Item",
                         width: 400,
-                        height: 400
+                        height: 275,
+                        getDialogResult: () => {
+                            // this happens when the Ok button is clicked
+                            return formInstance ? formInstance.getFormData(wid) : null;
+                        },
+                        okCallback: (result:BoardModel) => {
+                            // If a call to getDialogResult returns a non-null value, this value is then
+                            // passed to the function specified by okCallback (also in the options) and the dialog is closed.
+                            console.log("called");
+                            dialogInstance.close();
+                        }
                     };
 
                     dialogService.openDialog(contributionId, dialogOptions)
                         .then((dialog) => {
+                            dialogInstance = dialog;
                             dialog
                                 .getContributionInstance(contributionId)
                                 .then((instance:any) => {

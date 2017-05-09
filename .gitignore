@@ -1,5 +1,6 @@
 node_modules
 scripts/*.js
+scripts/**/*.js
 scripts/*.d.ts
 sdk/scripts
 dist

@@ -18,6 +18,7 @@ export class BoardService {
     private projectId:string;
     private teamId:string;
     private boardColumnReferenceName:string;
+    private boardLaneReferenceName:string;
     private boardColumns = new Array<string>();
     private boardRows = new Array<string>();
 
@@ -49,8 +50,8 @@ export class BoardService {
                         this.teamId = teams[0].id;
                         return this.workClient.getBoard(<CoreContracts.TeamContext>{ projectId: this.projectId, teamId: this.teamId }, "Stories");
                     }).then((board) => {
-                        console.log("here");
                         this.boardColumnReferenceName = board.fields.columnField.referenceName;
+                        this.boardLaneReferenceName = board.fields.rowField.referenceName;
                         board.columns.forEach((column) => {
                             this.boardColumns.push(column.name);
                         });
@@ -79,6 +80,38 @@ export class BoardService {
             .then(() => {
                 resolve(this.boardRows);
             });
+        });
+    }
+
+    updateBoardColumnAsync(boardColumn:string): IPromise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.loadBoardDataAsync()
+                .then(() => {
+                    this.witClient.updateWorkItem(
+                        [{"op":"add","path":"/fields/" + this.boardColumnReferenceName,"value":boardColumn}],
+                        this.workItemId,
+                        false,
+                        false)
+                        .then((workItem) => {
+                            console.log("wrote column");
+                            resolve();
+                        });
+                });
+        });
+    }
+    updateBoardRowAsync(boardRow:string): IPromise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this.loadBoardDataAsync()
+                .then(() => {
+                    this.witClient.updateWorkItem(
+                        [{"op":"add","path":"/fields/" + this.boardLaneReferenceName,"value":boardRow}],
+                        this.workItemId,
+                        false,
+                        false)
+                        .then((workItem) => {
+                            resolve();
+                        });
+                });
         });
     }
 }
