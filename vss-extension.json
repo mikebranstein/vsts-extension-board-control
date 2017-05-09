@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "board-form-control",
-    "version": "0.1.91",
+    "version": "0.1.92",
     "name": "Color picklist control",
     "description": "Add custom colors and labels for picklist fields.",
     "publisher": "mike-branstein",
