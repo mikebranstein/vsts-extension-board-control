@@ -16,17 +16,19 @@ define(["require", "exports", "./board-service"], function (require, exports, bo
                     option.append(boardColumn);
                     select.append(option);
                 });
-            });
-            boardService
-                .getSwimlanesAsync()
-                .then((swimlanes) => {
-                // populate the drop down
-                let select = $(".swimlane-select");
-                swimlanes.forEach((swimlane) => {
-                    let option = $("<option></option>");
-                    option.attr("value", swimlane);
-                    option.append(swimlane);
-                    select.append(option);
+            })
+                .then(() => {
+                boardService
+                    .getSwimlanesAsync()
+                    .then((swimlanes) => {
+                    // populate the drop down
+                    let select = $(".swimlane-select");
+                    swimlanes.forEach((swimlane) => {
+                        let option = $("<option></option>");
+                        option.attr("value", swimlane);
+                        option.append(swimlane);
+                        select.append(option);
+                    });
                 });
             });
         }

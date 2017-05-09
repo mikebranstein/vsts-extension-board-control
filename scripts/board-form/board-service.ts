@@ -18,8 +18,8 @@ export class BoardService {
     private projectId:string;
     private teamId:string;
     private boardColumnReferenceName:string;
-    private boardColumns:Array<string>;
-    private boardRows:Array<string>;
+    private boardColumns = new Array<string>();
+    private boardRows = new Array<string>();
 
     constructor(workItemId:number) {
         this.workItemId = workItemId;
@@ -30,49 +30,55 @@ export class BoardService {
 
     private loadBoardDataAsync(): IPromise<void> {
         return new Promise<void>((resolve, reject) => {
-            if (this. boardColumns !== null && this.boardRows !== null) 
+            if (this.boardColumns.length !== 0  && this.boardRows.length !== 0) {
                 resolve();
+            }
+            else {
+                this.witClient.getWorkItem(this.workItemId, null, null, WitContracts.WorkItemExpand.All)
+                    .then((workItem) => {
+                        this.workItem = workItem;
+                        return this.coreClient.getProjects();
+                    }).then((projects) => {
+                        var project = <CoreContracts.TeamProjectReference>
+                            projects.filter((project) => { 
+                                return project.name === this.workItem.fields["System.TeamProject"]; 
+                            })[0];
+                        this.projectId = project.id;
+                        return this.coreClient.getTeams(this.projectId, 1, 0);
+                    }).then((teams) => {
+                        this.teamId = teams[0].id;
+                        return this.workClient.getBoard(<CoreContracts.TeamContext>{ projectId: this.projectId, teamId: this.teamId }, "Stories");
+                    }).then((board) => {
+                        console.log("here");
+                        this.boardColumnReferenceName = board.fields.columnField.referenceName;
+                        board.columns.forEach((column) => {
+                            this.boardColumns.push(column.name);
+                        });
+                        board.rows.forEach((row) => {
+                            this.boardRows.push(row.name);
+                        })
 
-            this.boardColumns = new Array<string>();
-            this.boardRows = new Array<string>();
-            this.witClient.getWorkItem(this.workItemId, null, null, WitContracts.WorkItemExpand.All)
-                .then((workItem) => {
-                    this.workItem = workItem;
-                    return this.coreClient.getProjects();
-                }).then((projects) => {
-                    var project = <CoreContracts.TeamProjectReference>
-                        projects.filter((project) => { 
-                            return project.name === this.workItem.fields["System.TeamProject"]; 
-                        })[0];
-                    this.projectId = project.id;
-                    return this.coreClient.getTeams(this.projectId, 1, 0);
-                }).then((teams) => {
-                    this.teamId = teams[0].id;
-                    return this.workClient.getBoard(<CoreContracts.TeamContext>{ projectId: this.projectId, teamId: this.teamId }, "Stories");
-                }).then((board) => {
-                    this.boardColumnReferenceName = board.fields.columnField.referenceName;
-                    board.columns.forEach((column) => {
-                        this.boardColumns.push(column.name);
+                        resolve();
                     });
-                    board.rows.forEach((row) => {
-                        this.boardRows.push(row.name);
-                    })
-                    resolve();
-                });
-            });
+            }
+        });
     }
 
     getBoardColumnsAsync(): IPromise<Array<string>> {
-        return this.loadBoardDataAsync()
+        return new Promise<Array<string>>((resolve, reject) => {
+            this.loadBoardDataAsync()
             .then(() => {
-                return this.boardColumns;
-            })
+                resolve(this.boardColumns);
+            });
+        });
     }
 
     getSwimlanesAsync(): IPromise<Array<string>> {
-        return this.loadBoardDataAsync()
+        return new Promise<Array<string>>((resolve, reject) => {
+            this.loadBoardDataAsync()
             .then(() => {
-                return this.boardRows;
-            })
+                resolve(this.boardRows);
+            });
+        });
     }
 }

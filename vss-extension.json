@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "board-form-control",
-    "version": "0.1.296",
+    "version": "0.1.319",
     "name": "Board Work Item Form Control",
     "description": "Add combobox form controls for the board column and swimlane to the work item form.",
     "publisher": "mike-branstein",

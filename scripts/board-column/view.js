@@ -55,11 +55,14 @@ define(["require", "exports", "VSS/Controls", "VSS/Controls/Combos", "TFS/WorkIt
                     };
                     dialogService.openDialog(contributionId, dialogOptions)
                         .then((dialog) => {
-                        dialog.getContributionInstance(contributionId).then((instance) => {
+                        dialog
+                            .getContributionInstance(contributionId)
+                            .then((instance) => {
                             formInstance = instance;
-                            console.log(this.workItemId);
                             // initialization code goes here
                             formInstance.initialize(wid);
+                        }).then(() => {
+                            dialog.updateOkButton(true);
                         });
                     });
                 });

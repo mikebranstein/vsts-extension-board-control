@@ -88,15 +88,17 @@ export class BoardColumnControl {
 
                     dialogService.openDialog(contributionId, dialogOptions)
                         .then((dialog) => {
-                            dialog.getContributionInstance(contributionId).then((instance:any) => {
-                                formInstance = instance;
+                            dialog
+                                .getContributionInstance(contributionId)
+                                .then((instance:any) => {
+                                    formInstance = instance;
 
-                                console.log(this.workItemId);
-
-                                // initialization code goes here
-                                formInstance.initialize(wid);
-                            })
-                        })
+                                    // initialization code goes here
+                                    formInstance.initialize(wid);
+                                }).then(() => {
+                                    dialog.updateOkButton(true);
+                                });
+                        });
                 });
             });
 
