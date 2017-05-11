@@ -9,11 +9,6 @@ define(["require", "exports", "./view", "./errorView"], function (require, expor
         _initialize() {
             this._inputs = VSS.getConfiguration().witInputs;
             this._view = new view_1.BoardColumnControl();
-            // WitService.WorkItemFormService.getService().then(
-            //     (service) => {
-            //         this._view = new BoardColumnControl();
-            //     },
-            //     this._handleError);
         }
         _handleError(error) {
             let errorView = new errorView_1.ErrorView(error);

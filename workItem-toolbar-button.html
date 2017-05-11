@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+
+<body>
+    <script src="sdk/scripts/VSS.SDK.min.js"></script>
+
+    <script>
+        VSS.init({
+            explicitNotifyLoaded: true,
+            usePlatformScripts: true,
+            usePlatformStyles: true
+        });
+
+        // Load main entry point for extension 
+        VSS.require(["scripts/workItem-toolbar-button/app"], function () {
+            // loading succeeded
+            VSS.notifyLoadSucceeded();
+        });
+    </script>
+</body>
+</html>

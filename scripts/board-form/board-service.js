@@ -43,6 +43,22 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
                 }
             });
         }
+        getBoardColumnAsync() {
+            return new Promise((resolve, reject) => {
+                this.loadBoardDataAsync()
+                    .then(() => {
+                    resolve(this.workItem.fields[this.boardColumnReferenceName]);
+                });
+            });
+        }
+        getBoardRowAsync() {
+            return new Promise((resolve, reject) => {
+                this.loadBoardDataAsync()
+                    .then(() => {
+                    resolve(this.workItem.fields[this.boardLaneReferenceName]);
+                });
+            });
+        }
         getBoardColumnsAsync() {
             return new Promise((resolve, reject) => {
                 this.loadBoardDataAsync()

@@ -3,56 +3,59 @@ import { BoardModel } from "./boardModel";
 
 var provider = () => {
     
-    function init(workItemId:number) {
+    async function init(workItemId:number) {
+
+        // populate the drop down
+        let selectColumn = $(".board-column-select");
+        let selectRow = $(".board-row-select");
 
         // define the control here...
-        var boardService = new BoardService(workItemId);
-        boardService
-            .getBoardColumnsAsync()
+        let boardService = new BoardService(workItemId);
+        await boardService.getBoardColumnsAsync()
             .then((boardColumns) => {
-
-                // populate the drop down
-                let select = $(".board-column-select");
-
                 boardColumns.forEach((boardColumn) => {
                     let option = $("<option></option>");
                     option.attr("value", boardColumn);
                     option.append(boardColumn);
-                    select.append(option);
+                    selectColumn.append(option);
                 });
-            })
-            .then(() => {
-                boardService
-                    .getSwimlanesAsync()
-                    .then((swimlanes) => {
-
-                        // populate the drop down
-                        let select = $(".board-row-select");
-
-                        swimlanes.forEach((swimlane) => {
-                            let option = $("<option></option>");
-                            option.attr("value", swimlane);
-                            option.append(swimlane);
-                            select.append(option);
-                        })
-                    });
+            }).then(async () => {
+                var column = await boardService.getBoardColumnAsync();
+                selectColumn.val(column);
+            });
+        await boardService.getSwimlanesAsync()
+            .then((swimlanes) => {
+                swimlanes.forEach((swimlane) => {
+                    let option = $("<option></option>");
+                    option.attr("value", swimlane);
+                    option.append(swimlane);
+                    selectRow.append(option);
+                })
+            }).then(async () => {
+                var row = await boardService.getBoardRowAsync();
+                selectRow.val(row);
             });
     }
 
-    function getFormData(workItemId):BoardModel { 
+    async function getFormData(workItemId) { 
         // is called when the dialog Ok button is clicked. should return the data
-        var boardModel = new BoardModel();
+        let boardModel = new BoardModel();
+        boardModel.boardColumnIndex = $(".board-column-select").prop("selectedIndex");
         boardModel.boardColumn = $(".board-column-select").val();
         boardModel.boardRow = $(".board-row-select").val();
 
         var boardService = new BoardService(workItemId);
-        boardService.updateBoardColumnAsync(boardModel.boardColumn)
-            .then(() => {
-                console.log("here");
-            return boardModel;
+        var success = await boardService.updateBoardColumnAsync(boardModel.boardColumn)
+            .then(async () => {
+                if (boardModel.boardColumnIndex !== 0) {
+                    await boardService.updateBoardRowAsync(boardModel.boardRow);
+                }
+                return;
+            })
+            .then(() => { return true;}, () => { return false; });
 
-            });
-        //var rowPromise = boardService.updateBoardRowAsync(boardModel.boardRow);
+        if (success) { return boardModel; }
+        return null;
     }
 
     return {

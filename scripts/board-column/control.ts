@@ -21,14 +21,7 @@ export class Controller {
 
     private _initialize(): void {
         this._inputs = VSS.getConfiguration().witInputs;
-
-        this._view = new BoardColumnControl();
-
-        // WitService.WorkItemFormService.getService().then(
-        //     (service) => {
-        //         this._view = new BoardColumnControl();
-        //     },
-        //     this._handleError);
+        this._view = new BoardColumnControl(); 
     }
 
     private _handleError(error: string): void {

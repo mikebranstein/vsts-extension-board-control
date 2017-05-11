@@ -65,6 +65,24 @@ export class BoardService {
         });
     }
 
+    getBoardColumnAsync(): IPromise<string> {
+        return new Promise<string>((resolve, reject) => {
+            this.loadBoardDataAsync()
+                .then(() => {
+                    resolve(this.workItem.fields[this.boardColumnReferenceName]);
+                });
+        });
+    }
+
+    getBoardRowAsync(): IPromise<string> {
+        return new Promise<string>((resolve, reject) => {
+            this.loadBoardDataAsync()
+                .then(() => {
+                    resolve(this.workItem.fields[this.boardLaneReferenceName]);
+                });
+        });
+    }
+
     getBoardColumnsAsync(): IPromise<Array<string>> {
         return new Promise<Array<string>>((resolve, reject) => {
             this.loadBoardDataAsync()

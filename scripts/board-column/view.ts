@@ -73,46 +73,46 @@ export class BoardColumnControl {
                 };
                 Controls.create<Combos.Combo, Combos.IComboOptions>(Combos.Combo, container, options);
 
-                let wid = this.workItemId;
-                VSS.getService(VSS.ServiceIds.Dialog).then((dialogService:IHostDialogService) => {
-                    let formInstance;
-                    let dialogInstance:IExternalDialog;
-                    var extensionCtx = VSS.getExtensionContext();
-                    // Build absolute contribution ID for dialogContent
-                    let contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".board-form";
+                // let wid = this.workItemId;
+                // VSS.getService(VSS.ServiceIds.Dialog).then((dialogService:IHostDialogService) => {
+                //     let formInstance;
+                //     let dialogInstance:IExternalDialog;
+                //     var extensionCtx = VSS.getExtensionContext();
+                //     // Build absolute contribution ID for dialogContent
+                //     let contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".board-form";
 
-                    // Show dialog
-                    var dialogOptions = {
-                        title: "Move Work Item",
-                        width: 400,
-                        height: 275,
-                        getDialogResult: () => {
-                            // this happens when the Ok button is clicked
-                            return formInstance ? formInstance.getFormData(wid) : null;
-                        },
-                        okCallback: (result:BoardModel) => {
-                            // If a call to getDialogResult returns a non-null value, this value is then
-                            // passed to the function specified by okCallback (also in the options) and the dialog is closed.
-                            console.log("called");
-                            dialogInstance.close();
-                        }
-                    };
+                //     // Show dialog
+                //     var dialogOptions = {
+                //         title: "Move Work Item",
+                //         width: 400,
+                //         height: 275,
+                //         getDialogResult: () => {
+                //             // this happens when the Ok button is clicked
+                //             return formInstance ? formInstance.getFormData(wid) : null;
+                //         },
+                //         okCallback: (result:BoardModel) => {
+                //             // If a call to getDialogResult returns a non-null value, this value is then
+                //             // passed to the function specified by okCallback (also in the options) and the dialog is closed.
+                //             console.log("called");
+                //             dialogInstance.close();
+                //         }
+                //     };
 
-                    dialogService.openDialog(contributionId, dialogOptions)
-                        .then((dialog) => {
-                            dialogInstance = dialog;
-                            dialog
-                                .getContributionInstance(contributionId)
-                                .then((instance:any) => {
-                                    formInstance = instance;
+                //     dialogService.openDialog(contributionId, dialogOptions)
+                //         .then((dialog) => {
+                //             dialogInstance = dialog;
+                //             dialog
+                //                 .getContributionInstance(contributionId)
+                //                 .then((instance:any) => {
+                //                     formInstance = instance;
 
-                                    // initialization code goes here
-                                    formInstance.initialize(wid);
-                                }).then(() => {
-                                    dialog.updateOkButton(true);
-                                });
-                        });
-                });
+                //                     // initialization code goes here
+                //                     formInstance.initialize(wid);
+                //                 }).then(() => {
+                //                     dialog.updateOkButton(true);
+                //                 });
+                //         });
+                // });
             });
 
     }
