@@ -9,10 +9,10 @@
 
 <body>
     <script>
-        VSS.init({
+        VSS.init({ 
             explicitNotifyLoaded: true,
             usePlatformScripts: true,
-            usePlatformStyles: true
+            usePlatformStyles: true 
         });
 
         // Load main entry point for extension 
@@ -25,20 +25,20 @@
 
     <div class="widget-configuration">
         <div class="description">Select a board column and swimlane to move your work item.</p>
-        <div class="content">
-            <div class="dropdown">
-                <label>Board column</label>
-                <div class="wrapper">
-                    <select class="board-column-select">
-                    </select>
-                </div>
+
+        <div class="dropdown">
+            <label>Board column</label>
+            <div class="wrapper">
+                <select class="board-column-select">
+                </select>
             </div>
-            <div class="dropdown">
-                <label>Swimlane</label>
-                <div class="wrapper">
-                    <select class="board-row-select">
-                    </select>
-                </div>
+        </div>
+        <br />
+        <div class="dropdown">
+            <label>Swimlane</label>
+            <div class="wrapper">
+                <select class="board-row-select">
+                </select>
             </div>
         </div>
     </div>

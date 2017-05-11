@@ -15,14 +15,11 @@ var provider = () => {
 
                 // Build absolute contribution ID for dialogContent
                 let contributionId = extensionCtx.publisherId + "." + extensionCtx.extensionId + ".board-form";
-                console.log("here");
                 let wifService:WitService.IWorkItemFormService = await WitService.WorkItemFormService.getService();
-                console.log("here2");
                 let hasActiveWorkItem = await wifService.hasActiveWorkItem();
-                console.log("here3");
                 let id = await wifService.getId();
 
-                // Show dialog
+                // Show dialog 
                 var dialogOptions = {
                     title: "Move Work Item",
                     width: 400,

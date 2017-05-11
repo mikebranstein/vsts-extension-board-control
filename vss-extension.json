@@ -1,9 +1,9 @@
 {
     "manifestVersion": 1,
     "id": "board-form-control",
-    "version": "0.1.402",
-    "name": "Board Work Item Form Control",
-    "description": "Add combobox form controls for the board column and swimlane to the work item form.",
+    "version": "1.0.2",
+    "name": "Board Work Item Context Menu",
+    "description": "Change a work item's board column and row from the work item form.",
     "publisher": "mike-branstein",
     "icons": {
         "default": "img/logo.png"
@@ -15,13 +15,12 @@
     ],
     "tags": [
         "Work Item",
-        "Work Item control",
         "Board",
         "Lane"
     ],
     "content": {
         "details": {
-            "path": "details.md"
+            "path": "overview.md"
         }
     },
     "repository": {
@@ -59,14 +58,6 @@
             "addressable": true
         },
         {
-            "path": "color-index.html",
-            "addressable": true
-        },
-        {
-            "path": "board-column-index.html",
-            "addressable": true
-        },
-        {
             "path": "board-form.html",
             "addressable": true
         },
@@ -94,21 +85,8 @@
                 "text": "Move on board...",  
                 "title": "Updates the board column and row of the work item",  
                 "toolbarText": "Move on board...",  
-                "icon": "img/logo.png",  
+                "icon": "img/context-menu-icon.png",  
                 "uri": "workItem-toolbar-button.html"  
-            }
-        },
-        {
-            "id": "board-column-control-contribution",
-            "type": "ms.vss-work-web.work-item-form-control",
-            "description": "Add board column visualization.",
-            "targets": [
-                "ms.vss-work-web.work-item-form"
-            ],
-            "properties": {
-                "name": "Board column combobox control",
-                "uri": "board-column-index.html",
-                "height": 90
             }
         },
         {
