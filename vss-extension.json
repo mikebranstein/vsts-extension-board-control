@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "board-form-control",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "name": "Board Work Item Context Menu",
     "description": "Change a work item's board column and row from the work item form.",
     "publisher": "mike-branstein",
@@ -13,6 +13,7 @@
             "id": "Microsoft.VisualStudio.Services"
         }
     ],
+    "public": true,
     "tags": [
         "Work Item",
         "Board",

@@ -38,3 +38,8 @@ npm install
 
 To test compilation, you can run `gulp transpile-ts`. You should receive no errors.
 
+## To Create a Publish Manifest
+
+```
+gulp publish
+```

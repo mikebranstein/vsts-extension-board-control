@@ -16,6 +16,16 @@ gulp.task('build', function() {
         'clean-vsix');
 });
 
+gulp.task('publish', function() {
+    runSequence(
+        'clean-dist',
+        'copy-vss-sdk',
+        'transpile-ts',
+        'build-vsix-publish',
+        'copy-vsix',
+        'clean-vsix');
+});
+
 gulp.task('clean-dist', function() {
    gulp.src(['dist/**', '!dist'])
         .pipe(clean({force: true}));
@@ -39,6 +49,10 @@ gulp.task('transpile-ts', function() {
 
 gulp.task('build-vsix', shell.task([
     'tfx extension create --manifest-globs vss-extension.json --rev-version'
+]));
+
+gulp.task('build-vsix-publish', shell.task([
+    'tfx extension create --manifest-globs vss-extension.json'
 ]));
 
 gulp.task('copy-vsix', function() {
