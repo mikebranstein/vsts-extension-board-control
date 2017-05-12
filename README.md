@@ -9,7 +9,7 @@
 
 # Source code 
 
-The [source](https://github.com/mikebranstein/vsts-extension-board-form) for this extension can be found on Github - feel free to take, fork and extend. 
+The [source](https://github.com/mikebranstein/vsts-extension-board-control) for this extension can be found on Github - feel free to take, fork and extend. 
 
 You can also learn how to build your own custom control extension for the work item form [here](https://www.visualstudio.com/en-us/docs/integrate/extensions/develop/custom-control). 
 
@@ -18,7 +18,7 @@ You can also learn how to build your own custom control extension for the work i
 We need your feedback! Here are some ways to connect with us:
 
 * Add a review below.
-* Report issues in [GitHub](https://github.com/mikebranstein/vsts-extension-board-form/issues).
+* Report issues in [GitHub](https://github.com/mikebranstein/vsts-extension-board-control/issues).
 
 # To Use
 
