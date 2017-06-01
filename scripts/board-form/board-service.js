@@ -4,6 +4,7 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
     class BoardService {
         constructor(workItemId) {
             this.boardColumns = new Array();
+            this.boardColumnSplits = new Array();
             this.boardRows = new Array();
             this.workItemId = workItemId;
             this.witClient = WitClient.getClient();
@@ -31,9 +32,11 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
                         return this.workClient.getBoard({ projectId: this.projectId, teamId: this.teamId }, "Stories");
                     }).then((board) => {
                         this.boardColumnReferenceName = board.fields.columnField.referenceName;
+                        this.boardDoingDoneReferenceName = board.fields.doneField.referenceName;
                         this.boardLaneReferenceName = board.fields.rowField.referenceName;
                         board.columns.forEach((column) => {
                             this.boardColumns.push(column.name);
+                            this.boardColumnSplits.push(column.isSplit);
                         });
                         board.rows.forEach((row) => {
                             this.boardRows.push(row.name);
@@ -48,6 +51,23 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
                 this.loadBoardDataAsync()
                     .then(() => {
                     resolve(this.workItem.fields[this.boardColumnReferenceName]);
+                });
+            });
+        }
+        getBoardColumnDoneAsync() {
+            return new Promise((resolve, reject) => {
+                this.loadBoardDataAsync()
+                    .then(() => {
+                    resolve(this.workItem.fields[this.boardDoingDoneReferenceName]);
+                });
+            });
+        }
+        getBoardColumnSplitAsync(columnName) {
+            return new Promise((resolve, reject) => {
+                this.loadBoardDataAsync()
+                    .then(() => {
+                    let index = this.boardColumns.indexOf(columnName);
+                    resolve(this.boardColumnSplits[index]);
                 });
             });
         }
@@ -75,13 +95,15 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
                 });
             });
         }
-        updateBoardColumnAsync(boardColumn) {
+        updateBoardColumnAsync(boardColumn, isDone) {
             return new Promise((resolve, reject) => {
                 this.loadBoardDataAsync()
                     .then(() => {
-                    this.witClient.updateWorkItem([{ "op": "add", "path": "/fields/" + this.boardColumnReferenceName, "value": boardColumn }], this.workItemId, false, false)
+                    this.witClient.updateWorkItem([
+                        { "op": "add", "path": "/fields/" + this.boardColumnReferenceName, "value": boardColumn },
+                        { "op": "add", "path": "/fields/" + this.boardDoingDoneReferenceName, "value": isDone }
+                    ], this.workItemId, false, false)
                         .then((workItem) => {
-                        console.log("wrote column");
                         resolve();
                     });
                 });

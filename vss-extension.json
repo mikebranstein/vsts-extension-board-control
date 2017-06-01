@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "board-form-control",
-    "version": "1.0.4",
+    "version": "1.0.38",
     "name": "Board Work Item Context Menu",
     "description": "Change a work item's board column and row from the work item form.",
     "publisher": "mike-branstein",

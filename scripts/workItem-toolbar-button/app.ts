@@ -23,7 +23,7 @@ var provider = () => {
                 var dialogOptions = {
                     title: "Move Work Item",
                     width: 400,
-                    height: 275,
+                    height: 300,
                     getDialogResult: () => {
                         // this happens when the Ok button is clicked
                         console.log(id);
