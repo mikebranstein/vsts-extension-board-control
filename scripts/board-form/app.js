@@ -10,8 +10,9 @@ define(["require", "exports", "./board-service", "./boardModel"], function (requ
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var provider = () => {
-        function init(workItemId) {
+        function init(workItemIds, populateDropDownDefaults) {
             return __awaiter(this, void 0, void 0, function* () {
+                let boardService = new board_service_1.BoardService(workItemIds[0]);
                 // populate the drop down
                 let selectColumn = $(".board-column-select");
                 let selectDoingDone = $(".board-doing-done-select");
@@ -22,15 +23,17 @@ define(["require", "exports", "./board-service", "./boardModel"], function (requ
                         .then((isSplit) => {
                         if (isSplit) {
                             selectDoingDone.prop("disabled", false);
-                            boardService.getBoardColumnDoneAsync()
-                                .then((isDone) => {
-                                if (isDone) {
-                                    selectDoingDone.val("Done");
-                                }
-                                else {
-                                    selectDoingDone.val("Doing");
-                                }
-                            });
+                            if (populateDropDownDefaults) {
+                                boardService.getBoardColumnDoneAsync()
+                                    .then((isDone) => {
+                                    if (isDone) {
+                                        selectDoingDone.val("Done");
+                                    }
+                                    else {
+                                        selectDoingDone.val("Doing");
+                                    }
+                                });
+                            }
                         }
                         else {
                             selectDoingDone.prop("disabled", "disabled");
@@ -38,7 +41,6 @@ define(["require", "exports", "./board-service", "./boardModel"], function (requ
                         }
                     });
                 });
-                let boardService = new board_service_1.BoardService(workItemId);
                 yield boardService.getBoardColumnsAsync()
                     .then((boardColumns) => {
                     boardColumns.forEach((boardColumn) => {
@@ -49,8 +51,10 @@ define(["require", "exports", "./board-service", "./boardModel"], function (requ
                     });
                 }).then(() => __awaiter(this, void 0, void 0, function* () {
                     var column = yield boardService.getBoardColumnAsync();
-                    selectColumn.val(column);
-                    selectColumn.change();
+                    if (populateDropDownDefaults) {
+                        selectColumn.val(column);
+                        selectColumn.change();
+                    }
                 }));
                 yield boardService.getSwimlanesAsync()
                     .then((swimlanes) => {
@@ -62,11 +66,13 @@ define(["require", "exports", "./board-service", "./boardModel"], function (requ
                     });
                 }).then(() => __awaiter(this, void 0, void 0, function* () {
                     var row = yield boardService.getBoardRowAsync();
-                    selectRow.val(row);
+                    if (populateDropDownDefaults) {
+                        selectRow.val(row);
+                    }
                 }));
             });
         }
-        function getFormData(workItemId) {
+        function getFormData(workItemIds) {
             return __awaiter(this, void 0, void 0, function* () {
                 // is called when the dialog Ok button is clicked. should return the data
                 let boardModel = new boardModel_1.BoardModel();
@@ -75,29 +81,31 @@ define(["require", "exports", "./board-service", "./boardModel"], function (requ
                 boardModel.boardRow = $(".board-row-select").val();
                 boardModel.boardIsDone = ($(".board-doing-done-select").prop("disabled") === false
                     && $(".board-doing-done-select").val() === "Done");
-                var boardService = new board_service_1.BoardService(workItemId);
-                var success = yield boardService.updateBoardColumnAsync(boardModel.boardColumn, boardModel.boardIsDone)
-                    .then(() => __awaiter(this, void 0, void 0, function* () {
-                    if (boardModel.boardColumnIndex !== 0) {
-                        yield boardService.updateBoardRowAsync(boardModel.boardRow);
-                    }
-                    return;
-                }))
-                    .then(() => { return true; }, () => { return false; });
-                if (success) {
-                    return boardModel;
+                for (let i = 0; i < workItemIds.length; i++) {
+                    yield updateBoard(workItemIds[i], boardModel.boardColumn, boardModel.boardIsDone, boardModel.boardColumnIndex, boardModel.boardRow);
                 }
-                return null;
+                return boardModel;
             });
         }
         return {
-            initialize: (workItemId) => {
-                return init(workItemId);
+            initialize: (workItemIds, populateDropDownDefaults) => {
+                return init(workItemIds, populateDropDownDefaults);
             },
-            getFormData: (workItemId) => {
-                return getFormData(workItemId);
+            getFormData: (workItemIds) => {
+                return getFormData(workItemIds);
             }
         };
     };
+    function updateBoard(workItemId, boardColumn, boardIsDone, boardColumnIndex, boardRow) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let boardService = new board_service_1.BoardService(workItemId);
+            yield boardService.updateBoardColumnAsync(boardColumn, boardIsDone)
+                .then(() => __awaiter(this, void 0, void 0, function* () {
+                if (boardColumnIndex !== 0) {
+                    yield boardService.updateBoardRowAsync(boardRow);
+                }
+            }));
+        });
+    }
     VSS.register(VSS.getContribution().id, provider);
 });

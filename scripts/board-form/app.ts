@@ -1,9 +1,11 @@
 import { BoardService } from "./board-service";
 import { BoardModel } from "./boardModel";
+import * as Q from "q";
 
 var provider = () => {
     
-    async function init(workItemId:number) {
+    async function init(workItemIds:Array<number>, populateDropDownDefaults:boolean) {
+        let boardService = new BoardService(workItemIds[0]);
 
         // populate the drop down
         let selectColumn = $(".board-column-select");
@@ -16,16 +18,18 @@ var provider = () => {
                 .then((isSplit) => {
                     if (isSplit) {
                         selectDoingDone.prop("disabled", false);
-                        boardService.getBoardColumnDoneAsync()
-                            .then((isDone) => {
-                                if (isDone) {
-                                    selectDoingDone.val("Done");
-                                }
-                                else {
-                                    selectDoingDone.val("Doing");
-                                }
-                            });
 
+                        if (populateDropDownDefaults) {
+                            boardService.getBoardColumnDoneAsync()
+                                .then((isDone) => {
+                                    if (isDone) {
+                                        selectDoingDone.val("Done");
+                                    }
+                                    else {
+                                        selectDoingDone.val("Doing");
+                                    }
+                                });
+                        }
                     } else {
                         selectDoingDone.prop("disabled", "disabled");
                         selectDoingDone.val("Doing");
@@ -33,7 +37,6 @@ var provider = () => {
                 });
         });
 
-        let boardService = new BoardService(workItemId);
         await boardService.getBoardColumnsAsync()
             .then((boardColumns) => {
                 boardColumns.forEach((boardColumn) => {
@@ -44,8 +47,10 @@ var provider = () => {
                 });
             }).then(async () => {
                 var column = await boardService.getBoardColumnAsync();
-                selectColumn.val(column);
-                selectColumn.change();
+                if (populateDropDownDefaults) {
+                    selectColumn.val(column);
+                    selectColumn.change();
+                }
             });
         await boardService.getSwimlanesAsync()
             .then((swimlanes) => {
@@ -57,11 +62,13 @@ var provider = () => {
                 })
             }).then(async () => {
                 var row = await boardService.getBoardRowAsync();
-                selectRow.val(row);
+                if (populateDropDownDefaults) {
+                    selectRow.val(row);
+                }
             });
     }
 
-    async function getFormData(workItemId) { 
+    async function getFormData(workItemIds:Array<number>) { 
         // is called when the dialog Ok button is clicked. should return the data
         let boardModel = new BoardModel();
         boardModel.boardColumnIndex = $(".board-column-select").prop("selectedIndex");
@@ -71,28 +78,30 @@ var provider = () => {
             $(".board-doing-done-select").prop("disabled") === false 
             && $(".board-doing-done-select").val() === "Done");
 
-        var boardService = new BoardService(workItemId);
-        var success = await boardService.updateBoardColumnAsync(boardModel.boardColumn, boardModel.boardIsDone)
-            .then(async () => {
-                if (boardModel.boardColumnIndex !== 0) {
-                    await boardService.updateBoardRowAsync(boardModel.boardRow);
-                }
-                return;
-            })
-            .then(() => { return true;}, () => { return false; });
-
-        if (success) { return boardModel; }
-        return null;
+        for (let i = 0; i < workItemIds.length; i++) {
+            await updateBoard(workItemIds[i], boardModel.boardColumn, boardModel.boardIsDone, boardModel.boardColumnIndex, boardModel.boardRow);
+        }
+        return boardModel
     }
 
     return {
-        initialize: (workItemId:number) => {
-            return init(workItemId);
+        initialize: (workItemIds:Array<number>, populateDropDownDefaults: boolean) => {
+            return init(workItemIds, populateDropDownDefaults);
         },
-        getFormData: (workItemId:number) => {
-            return getFormData(workItemId);
+        getFormData: (workItemIds:Array<number>) => {
+            return getFormData(workItemIds);
         }
     }
 };
+
+async function updateBoard(workItemId: number, boardColumn: string, boardIsDone: boolean, boardColumnIndex: number, boardRow: string) {
+    let boardService = new BoardService(workItemId);
+    await boardService.updateBoardColumnAsync(boardColumn, boardIsDone)
+        .then(async () => {
+            if (boardColumnIndex !== 0) {
+                await boardService.updateBoardRowAsync(boardRow);
+            }
+        });
+}
 
 VSS.register(VSS.getContribution().id, provider);
