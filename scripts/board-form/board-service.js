@@ -1,8 +1,8 @@
 define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTracking/Contracts", "TFS/Core/RestClient", "TFS/Work/RestClient"], function (require, exports, WitClient, WitContracts, CoreClient, WorkClient) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    class BoardService {
-        constructor(workItemId) {
+    var BoardService = (function () {
+        function BoardService(workItemId) {
             this.boardColumns = new Array();
             this.boardColumnSplits = new Array();
             this.boardRows = new Array();
@@ -11,115 +11,125 @@ define(["require", "exports", "TFS/WorkItemTracking/RestClient", "TFS/WorkItemTr
             this.coreClient = CoreClient.getClient();
             this.workClient = WorkClient.getClient();
         }
-        loadBoardDataAsync() {
-            return new Promise((resolve, reject) => {
-                if (this.boardColumns.length !== 0 && this.boardRows.length !== 0) {
+        BoardService.prototype.loadBoardDataAsync = function () {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                if (_this.boardColumns.length !== 0 && _this.boardRows.length !== 0) {
                     resolve();
                 }
                 else {
-                    this.witClient.getWorkItem(this.workItemId, null, null, WitContracts.WorkItemExpand.All)
-                        .then((workItem) => {
-                        this.workItem = workItem;
-                        return this.coreClient.getProjects();
-                    }).then((projects) => {
-                        var project = projects.filter((project) => {
-                            return project.name === this.workItem.fields["System.TeamProject"];
+                    _this.witClient.getWorkItem(_this.workItemId, null, null, WitContracts.WorkItemExpand.All)
+                        .then(function (workItem) {
+                        _this.workItem = workItem;
+                        return _this.coreClient.getProjects();
+                    }).then(function (projects) {
+                        var project = projects.filter(function (project) {
+                            return project.name === _this.workItem.fields["System.TeamProject"];
                         })[0];
-                        this.projectId = project.id;
-                        return this.coreClient.getTeams(this.projectId, 1, 0);
-                    }).then((teams) => {
-                        this.teamId = teams[0].id;
-                        return this.workClient.getBoard({ projectId: this.projectId, teamId: this.teamId }, "Stories");
-                    }).then((board) => {
-                        this.boardColumnReferenceName = board.fields.columnField.referenceName;
-                        this.boardDoingDoneReferenceName = board.fields.doneField.referenceName;
-                        this.boardLaneReferenceName = board.fields.rowField.referenceName;
-                        board.columns.forEach((column) => {
-                            this.boardColumns.push(column.name);
-                            this.boardColumnSplits.push(column.isSplit);
+                        _this.projectId = project.id;
+                        return _this.coreClient.getTeams(_this.projectId, 1, 0);
+                    }).then(function (teams) {
+                        _this.teamId = teams[0].id;
+                        return _this.workClient.getBoard({ projectId: _this.projectId, teamId: _this.teamId }, "Stories");
+                    }).then(function (board) {
+                        _this.boardColumnReferenceName = board.fields.columnField.referenceName;
+                        _this.boardDoingDoneReferenceName = board.fields.doneField.referenceName;
+                        _this.boardLaneReferenceName = board.fields.rowField.referenceName;
+                        board.columns.forEach(function (column) {
+                            _this.boardColumns.push(column.name);
+                            _this.boardColumnSplits.push(column.isSplit);
                         });
-                        board.rows.forEach((row) => {
-                            this.boardRows.push(row.name);
+                        board.rows.forEach(function (row) {
+                            _this.boardRows.push(row.name);
                         });
                         resolve();
                     });
                 }
             });
-        }
-        getBoardColumnAsync() {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    resolve(this.workItem.fields[this.boardColumnReferenceName]);
+        };
+        BoardService.prototype.getBoardColumnAsync = function () {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    resolve(_this.workItem.fields[_this.boardColumnReferenceName]);
                 });
             });
-        }
-        getBoardColumnDoneAsync() {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    resolve(this.workItem.fields[this.boardDoingDoneReferenceName]);
+        };
+        BoardService.prototype.getBoardColumnDoneAsync = function () {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    resolve(_this.workItem.fields[_this.boardDoingDoneReferenceName]);
                 });
             });
-        }
-        getBoardColumnSplitAsync(columnName) {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    let index = this.boardColumns.indexOf(columnName);
-                    resolve(this.boardColumnSplits[index]);
+        };
+        BoardService.prototype.getBoardColumnSplitAsync = function (columnName) {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    var index = _this.boardColumns.indexOf(columnName);
+                    resolve(_this.boardColumnSplits[index]);
                 });
             });
-        }
-        getBoardRowAsync() {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    resolve(this.workItem.fields[this.boardLaneReferenceName]);
+        };
+        BoardService.prototype.getBoardRowAsync = function () {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    resolve(_this.workItem.fields[_this.boardLaneReferenceName]);
                 });
             });
-        }
-        getBoardColumnsAsync() {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    resolve(this.boardColumns);
+        };
+        BoardService.prototype.getBoardColumnsAsync = function () {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    resolve(_this.boardColumns);
                 });
             });
-        }
-        getSwimlanesAsync() {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    resolve(this.boardRows);
+        };
+        BoardService.prototype.getSwimlanesAsync = function () {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    resolve(_this.boardRows);
                 });
             });
-        }
-        updateBoardColumnAsync(boardColumn, isDone) {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    this.witClient.updateWorkItem([
-                        { "op": "add", "path": "/fields/" + this.boardColumnReferenceName, "value": boardColumn },
-                        { "op": "add", "path": "/fields/" + this.boardDoingDoneReferenceName, "value": isDone }
-                    ], this.workItemId, false, false)
-                        .then((workItem) => {
+        };
+        BoardService.prototype.updateBoardColumnAsync = function (boardColumn, isDone) {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    _this.witClient.updateWorkItem([
+                        { "op": "add", "path": "/fields/" + _this.boardColumnReferenceName, "value": boardColumn },
+                        { "op": "add", "path": "/fields/" + _this.boardDoingDoneReferenceName, "value": isDone }
+                    ], _this.workItemId, false, false)
+                        .then(function (workItem) {
                         resolve();
                     });
                 });
             });
-        }
-        updateBoardRowAsync(boardRow) {
-            return new Promise((resolve, reject) => {
-                this.loadBoardDataAsync()
-                    .then(() => {
-                    this.witClient.updateWorkItem([{ "op": "add", "path": "/fields/" + this.boardLaneReferenceName, "value": boardRow }], this.workItemId, false, false)
-                        .then((workItem) => {
+        };
+        BoardService.prototype.updateBoardRowAsync = function (boardRow) {
+            var _this = this;
+            return new Promise(function (resolve, reject) {
+                _this.loadBoardDataAsync()
+                    .then(function () {
+                    _this.witClient.updateWorkItem([{ "op": "add", "path": "/fields/" + _this.boardLaneReferenceName, "value": boardRow }], _this.workItemId, false, false)
+                        .then(function (workItem) {
                         resolve();
                     });
                 });
             });
-        }
-    }
+        };
+        return BoardService;
+    }());
     exports.BoardService = BoardService;
 });

@@ -10,7 +10,7 @@ import WorkClient = require("TFS/Work/RestClient");
 export class BoardService {
 
     private wifService:WitService.IWorkItemFormService;
-    private witClient:WitClient.WorkItemTrackingHttpClient3_2;
+    private witClient:WitClient.WorkItemTrackingHttpClient3_1;
     private coreClient:CoreClient.CoreHttpClient3;
     private workClient:WorkClient.WorkHttpClient3_2;
     private workItemId:number;

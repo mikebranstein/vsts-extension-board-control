@@ -2,12 +2,17 @@
     "compilerOptions": {
         "module": "amd",
         "sourceMap": false,
-        "target": "es6",
+        "target": "es5",
         "moduleResolution": "node",
         "types": [
             "vss-web-extension-sdk",
             "jquery",
             "q"
+        ],
+        "lib": [
+            "es2015.promise",
+            "es5",
+            "dom"
         ]
     },
     "exclude": [

@@ -1,7 +1,7 @@
 {
     "manifestVersion": 1,
     "id": "board-form-control",
-    "version": "1.2.0",
+    "version": "1.3.1",
     "name": "Board Work Item Context Menu",
     "description": "Change a work item's board column and row from the work item form or backlog.",
     "publisher": "mike-branstein",
@@ -69,7 +69,12 @@
         {
             "path": "sdk/scripts/VSS.SDK.min.js",
             "addressable": true
+        },
+        {
+            "path": "sdk/scripts/bluebird.min.js",
+            "addressable": true
         }
+
     ],
     "categories": [
         "Plan and track"
